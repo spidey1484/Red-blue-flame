@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -231,7 +232,7 @@
 
             canvasCtx.globalCompositeOperation = 'multiply';
             const darkAlpha = 0.5;
-            canvasCtx.fillStyle = `rgba(10, 5, 0, ${darkAlpha})`;
+            canvasCtx.fillStyle = rgba(10, 5, 0, ${darkAlpha});
             canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.globalCompositeOperation = 'source-over';
 
@@ -250,7 +251,7 @@
 
                 if (lightningIntensity > 0.01) {
                     if (Math.random() < 0.5 * lightningIntensity) {
-                        canvasCtx.fillStyle = `rgba(200, 220, 255, ${0.25 * lightningIntensity})`;
+                        canvasCtx.fillStyle = rgba(200, 220, 255, ${0.25 * lightningIntensity});
                         canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
                     }
 
@@ -326,8 +327,8 @@
                             let flicker = Math.sin(Date.now() * 0.02) * 25;
                             let redGlow = canvasCtx.createRadialGradient(lx, ly, 0, lx, ly, 550 + flicker);
 
-                            redGlow.addColorStop(0, `rgba(255, 0, 0, ${0.45 * intensity})`);
-                            redGlow.addColorStop(0.5, `rgba(200, 0, 0, ${0.15 * intensity})`);
+                            redGlow.addColorStop(0, rgba(255, 0, 0, ${0.45 * intensity}));
+                            redGlow.addColorStop(0.5, rgba(200, 0, 0, ${0.15 * intensity}));
                             redGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                             canvasCtx.globalCompositeOperation = 'screen';
@@ -344,8 +345,8 @@
                             let flicker = Math.sin(Date.now() * 0.01) * 20;
                             let blueGlow = canvasCtx.createRadialGradient(lx, ly, 0, lx, ly, 400 + flicker);
 
-                            blueGlow.addColorStop(0, `rgba(0, 0, 255, ${0.4 * intensity})`);
-                            blueGlow.addColorStop(0.5, `rgba(0, 50, 255, ${0.1 * intensity})`);
+                            blueGlow.addColorStop(0, rgba(0, 0, 255, ${0.4 * intensity}));
+                            blueGlow.addColorStop(0.5, rgba(0, 50, 255, ${0.1 * intensity}));
                             blueGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                             canvasCtx.globalCompositeOperation = 'screen';
@@ -364,8 +365,8 @@
                             let flicker = Math.sin(Date.now() * 0.02) * 25;
                             let heatGlow = canvasCtx.createRadialGradient(lx, ly, 0, lx, ly, 550 + flicker);
 
-                            heatGlow.addColorStop(0, `rgba(255, 60, 0, ${0.45 * intensity})`);
-                            heatGlow.addColorStop(0.5, `rgba(255, 30, 0, ${0.15 * intensity})`);
+                            heatGlow.addColorStop(0, rgba(255, 60, 0, ${0.45 * intensity}));
+                            heatGlow.addColorStop(0.5, rgba(255, 30, 0, ${0.15 * intensity}));
                             heatGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                             canvasCtx.globalCompositeOperation = 'screen';
@@ -382,8 +383,8 @@
                             let flicker = Math.sin(Date.now() * 0.01) * 20;
                             let coldGlow = canvasCtx.createRadialGradient(lx, ly, 0, lx, ly, 400 + flicker);
 
-                            coldGlow.addColorStop(0, `rgba(100, 200, 255, ${0.4 * intensity})`);
-                            coldGlow.addColorStop(0.5, `rgba(0, 100, 255, ${0.1 * intensity})`);
+                            coldGlow.addColorStop(0, rgba(100, 200, 255, ${0.4 * intensity}));
+                            coldGlow.addColorStop(0.5, rgba(0, 100, 255, ${0.1 * intensity}));
                             coldGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                             canvasCtx.globalCompositeOperation = 'screen';
@@ -414,24 +415,24 @@
                     let gradient = canvasCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
 
                     if (p.type === 'ice') {
-                        gradient.addColorStop(0, `rgba(255, 255, 255, ${p.life})`);
-                        gradient.addColorStop(0.3, `rgba(180, 240, 255, ${p.life * 0.8})`);
-                        gradient.addColorStop(0.6, `rgba(0, 150, 255, ${p.life * 0.4})`);
+                        gradient.addColorStop(0, rgba(255, 255, 255, ${p.life}));
+                        gradient.addColorStop(0.3, rgba(180, 240, 255, ${p.life * 0.8}));
+                        gradient.addColorStop(0.6, rgba(0, 150, 255, ${p.life * 0.4}));
                     } else if (p.type === 'red') {
-                        gradient.addColorStop(0, `rgba(255, 200, 200, ${p.life})`);
-                        gradient.addColorStop(0.3, `rgba(255, 0, 0, ${p.life * 0.8})`);
-                        gradient.addColorStop(0.6, `rgba(100, 0, 0, ${p.life * 0.4})`);
+                        gradient.addColorStop(0, rgba(255, 200, 200, ${p.life}));
+                        gradient.addColorStop(0.3, rgba(255, 0, 0, ${p.life * 0.8}));
+                        gradient.addColorStop(0.6, rgba(100, 0, 0, ${p.life * 0.4}));
                     } else if (p.type === 'blue') {
-                        gradient.addColorStop(0, `rgba(200, 200, 255, ${p.life})`);
-                        gradient.addColorStop(0.3, `rgba(0, 0, 255, ${p.life * 0.8})`);
-                        gradient.addColorStop(0.6, `rgba(0, 0, 100, ${p.life * 0.4})`);
+                        gradient.addColorStop(0, rgba(200, 200, 255, ${p.life}));
+                        gradient.addColorStop(0.3, rgba(0, 0, 255, ${p.life * 0.8}));
+                        gradient.addColorStop(0.6, rgba(0, 0, 100, ${p.life * 0.4}));
                     } else {
-                        gradient.addColorStop(0, `rgba(255, 255, 220, ${p.life})`);
-                        gradient.addColorStop(0.2, `rgba(255, 180, 0, ${p.life * 0.8})`);
-                        gradient.addColorStop(0.5, `rgba(255, 40, 0, ${p.life * 0.4})`);
+                        gradient.addColorStop(0, rgba(255, 255, 220, ${p.life}));
+                        gradient.addColorStop(0.2, rgba(255, 180, 0, ${p.life * 0.8}));
+                        gradient.addColorStop(0.5, rgba(255, 40, 0, ${p.life * 0.4}));
                     }
-                    gradient.addColorStop(1, `rgba(0, 0, 0, 0)`);
-                    gradient.addColorStop(1, `rgba(0, 0, 0, 0)`);
+                    gradient.addColorStop(1, rgba(0, 0, 0, 0));
+                    gradient.addColorStop(1, rgba(0, 0, 0, 0));
 
                     canvasCtx.fillStyle = gradient;
                     canvasCtx.beginPath();
@@ -488,7 +489,7 @@
 
         const hands = new Hands({
             locateFile: (file) => {
-                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+                return https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file};
             }
         });
 
