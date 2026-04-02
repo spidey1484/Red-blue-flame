@@ -44,150 +44,135 @@
 
         let currentPower = 'fire_ice';
         let lightningIntensity = 0;
-        let lastTip = { x: 0, y: 0, active: false };
 
-        let handIntensities = [0, 0];
-        let handSurges = [0, 0];
-        let lastHandOpenState = [false, false];
-
-        const HAND_CONNECTIONS = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-
-        function spawnFire(x,y,isDrawing=false){
-            if(!isDrawing && Math.random()>handIntensities[0]) return;
-            let count=isDrawing?2:1;
-            for(let i=0;i<count;i++){
-                particles.push({
-                    x:x+(Math.random()-0.5)*(isDrawing?10:15),
-                    y:y+(Math.random()-0.5)*(isDrawing?10:15),
-                    vx:isDrawing?0:(Math.random()-0.5)*4,
-                    vy:isDrawing?0:((Math.random()*-10)-4)-(handSurges[0]*20),
-                    life:1.0,
-                    decay:isDrawing?0.0055:0.06,
-                    size:isDrawing?(Math.random()*20+20):(Math.random()*22+8),
-                    type:'fire'
-                });
-            }
+        function spawnFire(x, y) {
+            particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() * -10) - 4,
+                life: 1,
+                size: Math.random() * 20 + 10
+            });
         }
 
-        function spawnIce(x,y,isDrawing=false){
-            if(!isDrawing && Math.random()>handIntensities[1]) return;
-            let count=isDrawing?2:1;
-            for(let i=0;i<count;i++){
-                particles.push({
-                    x:x+(Math.random()-0.5)*(isDrawing?10:15),
-                    y:y+(Math.random()-0.5)*(isDrawing?10:15),
-                    vx:isDrawing?0:(Math.random()-0.5)*4,
-                    vy:isDrawing?0:((Math.random()*-5)-2)-(handSurges[1]*15),
-                    life:1.0,
-                    decay:isDrawing?0.0055:0.06,
-                    size:isDrawing?(Math.random()*20+20):(Math.random()*20+5),
-                    type:'ice'
-                });
+        function spawnLightning(x, y) {
+            const bolt = [];
+            let cx = x, cy = y;
+            for (let i = 0; i < 20; i++) {
+                bolt.push({ x: cx, y: cy });
+                cx += (Math.random() - 0.5) * 60;
+                cy += (Math.random() - 0.8) * 60;
             }
+            lightningBolts.push({ path: bolt, life: 1 });
         }
 
-        function spawnLightning(x,y){
-            if(Math.random()>lightningIntensity) return;
-            const bolt=[];
-            let cx=x, cy=y;
-            for(let i=0;i<25;i++){
-                bolt.push({x:cx,y:cy});
-                cx+=(Math.random()-0.5)*80;
-                cy+=(Math.random()-0.8)*80;
+        function isHandOpen(landmarks) {
+            let open = 0;
+            const wrist = landmarks[0];
+            const tips = [8, 12, 16, 20];
+            const pips = [6, 10, 14, 18];
+            for (let i = 0; i < tips.length; i++) {
+                if (Math.hypot(landmarks[tips[i]].x - wrist.x, landmarks[tips[i]].y - wrist.y) >
+                    Math.hypot(landmarks[pips[i]].x - wrist.x, landmarks[pips[i]].y - wrist.y)) open++;
             }
-            lightningBolts.push({path:bolt,life:1.0,color:'#00bfff'});
+            return open >= 3;
         }
 
-        document.addEventListener('keydown',(e)=>{
-            if(e.key==='1') currentPower='fire_ice';
-            if(e.key==='2') currentPower='lightning';
-        });
+        function onResults(results) {
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
 
-        function isHandOpen(landmarks){
-            let open=0;
-            const wrist=landmarks[0];
-            const tips=[8,12,16,20];
-            const pips=[6,10,14,18];
-            for(let i=0;i<tips.length;i++){
-                const tip=landmarks[tips[i]];
-                const pip=landmarks[pips[i]];
-                if(Math.hypot(tip.x-wrist.x,tip.y-wrist.y) > Math.hypot(pip.x-wrist.x,pip.y-wrist.y)) open++;
-            }
-            return open>=3;
-        }
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-        function onResults(results){
-            canvasElement.width=window.innerWidth;
-            canvasElement.height=window.innerHeight;
+            // 🔥 brightness boost
+            canvasCtx.filter = 'brightness(1.2) contrast(1.05)';
 
-            canvasCtx.clearRect(0,0,canvasElement.width,canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-            // ✅ brightness boost added
-            canvasCtx.filter = 'brightness(1.2)';
+            // 🔧 reduced darkness
+            canvasCtx.globalCompositeOperation = 'multiply';
+            const darkAlpha = 0.25;
+            canvasCtx.fillStyle = `rgba(10, 5, 0, ${darkAlpha})`;
+            canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.globalCompositeOperation = 'source-over';
 
-            canvasCtx.drawImage(results.image,0,0,canvasElement.width,canvasElement.height);
+            // ⚠️ reset filter (important)
+            canvasCtx.filter = 'none';
 
-            // ✅ reduced darkness
-            canvasCtx.globalCompositeOperation='multiply';
-            const darkAlpha=0.25;
-            canvasCtx.fillStyle=`rgba(10,5,0,${darkAlpha})`;
-            canvasCtx.fillRect(0,0,canvasElement.width,canvasElement.height);
-            canvasCtx.globalCompositeOperation='source-over';
+            if (results.multiHandLandmarks) {
+                results.multiHandLandmarks.forEach((landmarks) => {
+                    if (!isHandOpen(landmarks)) return;
 
-            if(results.multiHandLandmarks){
-                results.multiHandLandmarks.forEach((landmarks,index)=>{
-                    if(!isHandOpen(landmarks)) return;
+                    const palm = landmarks[9];
+                    const x = palm.x * canvasElement.width;
+                    const y = palm.y * canvasElement.height;
 
-                    const palm=landmarks[9];
-                    const x=palm.x*canvasElement.width;
-                    const y=palm.y*canvasElement.height;
+                    spawnFire(x, y);
 
-                    spawnFire(x,y);
-                    spawnLightning(x,y);
+                    if (Math.random() < 0.3) {
+                        spawnLightning(x, y);
+                    }
                 });
             }
 
-            canvasCtx.globalCompositeOperation='lighter';
+            canvasCtx.globalCompositeOperation = 'lighter';
 
-            particles.forEach((p,i)=>{
-                p.x+=p.vx;
-                p.y+=p.vy;
-                p.life-=p.decay;
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05;
 
-                if(p.life<=0){
-                    particles.splice(i,1);
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
                 } else {
-                    let g=canvasCtx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
-                    g.addColorStop(0,`rgba(255,200,0,${p.life})`);
-                    g.addColorStop(1,'rgba(0,0,0,0)');
-                    canvasCtx.fillStyle=g;
+                    let g = canvasCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                    g.addColorStop(0, `rgba(255,200,0,${p.life})`);
+                    g.addColorStop(1, 'rgba(0,0,0,0)');
+                    canvasCtx.fillStyle = g;
                     canvasCtx.beginPath();
-                    canvasCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
+                    canvasCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     canvasCtx.fill();
+                }
+            });
+
+            lightningBolts.forEach((b, i) => {
+                b.life -= 0.1;
+                if (b.life <= 0) {
+                    lightningBolts.splice(i, 1);
+                } else {
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(b.path[0].x, b.path[0].y);
+                    for (let j = 1; j < b.path.length; j++) {
+                        canvasCtx.lineTo(b.path[j].x, b.path[j].y);
+                    }
+                    canvasCtx.strokeStyle = '#00bfff';
+                    canvasCtx.lineWidth = 3;
+                    canvasCtx.stroke();
                 }
             });
         }
 
-        const hands=new Hands({
-            locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
 
         hands.setOptions({
-            maxNumHands:2,
-            modelComplexity:1,
-            minDetectionConfidence:0.65,
-            minTrackingConfidence:0.65
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.65,
+            minTrackingConfidence: 0.65
         });
 
         hands.onResults(onResults);
 
-        const camera=new Camera(videoElement,{
-            onFrame: async ()=>{
-                await hands.send({image:videoElement});
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
             },
-            width:1280,
-            height:720
+            width: 1280,
+            height: 720
         });
+
         camera.start();
     </script>
 </body>
