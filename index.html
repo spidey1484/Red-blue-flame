@@ -231,7 +231,7 @@
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
             canvasCtx.globalCompositeOperation = 'multiply';
-            const darkAlpha = 0.5;
+            const darkAlpha = 0.25;
             canvasCtx.fillStyle = rgba(10, 5, 0, ${darkAlpha});
             canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.globalCompositeOperation = 'source-over';
